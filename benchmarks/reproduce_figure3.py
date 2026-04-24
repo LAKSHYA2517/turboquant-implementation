@@ -1,19 +1,8 @@
-# benchmarks/reproduce_figure3.py
-"""
-Reproduce Paper's Figure 3: MSE vs Bit-width
-"""
 import numpy as np
 import matplotlib.pyplot as plt
 from core.quantizer import TurboQuantMSE
 
 def reproduce_figure_3(d: int = 256, n_trials: int = 100):
-    """
-    Replicate the key result from Paper Figure 3
-    
-    Shows: MSE decreases exponentially with bit-width
-    Theory: MSE ≤ √(3π/2) * 1/4^b
-    """
-    
     bitwidths = [1, 2, 3, 4]
     mse_empirical = []
     mse_theory = []

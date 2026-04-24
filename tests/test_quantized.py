@@ -20,11 +20,6 @@ def test_quantization_reversible():
     assert np.isclose(np.linalg.norm(x), np.linalg.norm(x_reconstructed), rtol=0.2)
 
 def test_mse_matches_theory():
-    """
-    Paper Theorem 1: MSE ≤ √(3π/2) * 1/4^b
-    
-    Test that empirical MSE is in expected range
-    """
     d = 256
     bitwidth = 2
     quant = TurboQuantMSE(d, bitwidth, seed=42)

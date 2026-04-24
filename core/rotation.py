@@ -5,12 +5,6 @@ class RotationMatrix:
     
     @staticmethod
     def generate(d: int, seed: int = None) -> np.ndarray:
-        """
-        Generate random rotation matrix
-        
-        Paper Section 3.1: We use QR decomposition of Gaussian matrix
-        This gives uniform distribution over rotation group SO(d)
-        """
         if seed is not None:
             np.random.seed(seed)
         

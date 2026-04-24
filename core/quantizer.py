@@ -8,26 +8,13 @@ class TurboQuantMSE:
     """MSE-optimal quantization as per Paper Algorithm 1"""
     
     def __init__(self, d: int, bitwidth: int, seed: int = 42):
-        """
-        Args:
-            d: dimension
-            bitwidth: bits per coordinate
-            seed: for reproducibility
-        """
         self.d = d
         self.b = bitwidth
         self.rotation = RotationMatrix.generate(d, seed=seed)
         self.centroids = self._get_codebook(bitwidth)
     
     def _get_codebook(self, bitwidth: int) -> np.ndarray:
-        """
-        Get precomputed optimal codebook for bitwidth
         
-        Paper Theorem 1: Precomputed codebooks for b=1,2,3,4
-        Using Lloyd-Max algorithm on Beta distribution
-        
-        For now: use analytic solution for b=1, approximate for others
-        """
         if bitwidth == 1:
             # Optimal 1-bit centroids: ±√(2/(πd))
             c = np.sqrt(2 / (np.pi * self.d))
@@ -49,14 +36,7 @@ class TurboQuantMSE:
             return np.linspace(-0.99, 0.99, n_levels)
     
     def quantize(self, x: np.ndarray) -> tuple:
-        """
-        Quantize vector to bit-width b
-        
-        Algorithm (Paper Section 3.1):
-        1. Rotate: y = Π @ x
-        2. For each coordinate: find nearest centroid
-        3. Return indices
-        """
+
         # Normalize
         norm = np.linalg.norm(x)
         x_normalized = x / (norm + 1e-10)
@@ -73,21 +53,16 @@ class TurboQuantMSE:
         return indices, norm
     
     def dequantize(self, indices: np.ndarray, norm: float) -> np.ndarray:
-        """
-        Reconstruct vector from quantization
-        
-        Algorithm (Paper Section 3.1):
-        1. Look up centroids: ỹ_j = C[indices_j]
-        2. Rotate back: x̃ = Π^T @ ỹ
-        3. Rescale: x̃ = x̃ * norm
-        """
+
         # Look up centroids
         y_reconstructed = self.centroids[indices.astype(int)]
         
         # Rotate back
         x_normalized_reconstructed = self.rotation.T @ y_reconstructed
         
-        # Rescale by original norm
+        # Normalize to unit norm, then rescale by original norm
+        norm_reconstructed = np.linalg.norm(x_normalized_reconstructed)
+        x_normalized_reconstructed = x_normalized_reconstructed / (norm_reconstructed + 1e-10)
         x_reconstructed = x_normalized_reconstructed * norm
         
         return x_reconstructed
