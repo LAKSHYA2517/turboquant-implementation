@@ -129,7 +129,7 @@ What I did not implement yet:
 ## Project Structure
 
 ```text
-TurboQuant/
+turboquant-implementation/
 ├── README.md
 ├── paper_understanding.md
 ├── core/
